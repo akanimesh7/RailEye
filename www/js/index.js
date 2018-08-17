@@ -92,7 +92,7 @@ function onDeviceReady() {
 /*    cordova.plugins.backgroundMode.wakeUp();
 // Turn screen on and show app even locked
     cordova.plugins.backgroundMode.unlock();*/
-    alert("device ready ho gaya");
+    alert("Device is now ready");
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {

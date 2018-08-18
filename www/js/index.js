@@ -111,13 +111,10 @@ function onDeviceReady() {
         var str = "https://api.railwayapi.com/v2/live/train/" + trainNo + "/date/" + date + "/apikey/0wzmjhtydk/";
        
         function myfunction() {           
-            // //alert("chal gaya behenchod");
-           //alert("fukka" +f);
             if (f === 1) {
-                //alert("khatam1");
+                //stops 
             }else{
             $.getJSON(str).done(function(data) {
-                //alert("station me lat lng lene gya");
                 js = data;
                 for (var x in js["route"]) {
                     if (js["route"][x]["station"]["code"] == stn) {
@@ -126,29 +123,22 @@ function onDeviceReady() {
                         actdate = js["route"][x]["actarr_date"];
                         stlat = js["route"][x]["station"]["lat"];
                         stlng = js["route"][x]["station"]["lng"];
-                        // alert(stlat + ", " + stlng + ',' + acttime + ',' + actdate);
                     }
                 }
                 trn_date = new Date(convert(actdate));
                 trn_time = Number(trn_date.getTime()) / 60000 + Number(ToMinutes(acttime));
                 currentdate = new Date();
                 cur_time = Number(currentdate.getTime()) / 60000 + 330;
-                //alert("tominutes " + Number(ToMinutes(acttime)));
-                //alert(trn_time + "*********");
                 var timeurl = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + String(mylat) + "," + String(mylng) + "&destinations=" + String(stlat) + "," + String(stlng) + "&key=AIzaSyDIA2sanaz4DfVqxcDhVce6ctTholsQaNo";
                 $.getJSON(timeurl, function(data) {
                     ads = data;
-                    stn_time = Number(ads["rows"][0]["elements"][0]["duration"]["value"]) / 60;
-                    // alert("times  " + trn_time + ' , ' + stn_time + ' ,  ' + cur_time);
-                    // alert(trn_time - stn_time - cur_time); 
+                    stn_time = Number(ads["rows"][0]["elements"][0]["duration"]["value"]) / 60; 
                     time = trn_time - stn_time - cur_time;
                     if (trn_time - stn_time - cur_time <= 10) {
-                        // flag = 1;
                         f=1;
-                        //alert("Nikal BC");
                         cordova.plugins.notification.local.schedule({
                             title: 'RailEye',
-                            text: 'NIkal mc'+trainNo,
+                            text: 'Time to Depart'+trainNo,
                             /*sound:'file://beep-02.wav',*/
                             led: "FFF333",
                             foreground: true
@@ -156,11 +146,9 @@ function onDeviceReady() {
                         
                     }
                     else if (trn_time - stn_time - cur_time <= 25) {
-                        //alert("tyaar hoja BC");
                         cordova.plugins.notification.local.schedule({
-                            title: 'GET READY BETICHOD',
+                            title: 'GET READY',
                             text: String(time -10) + ' mins left to leave',
-                            /*sound:'file://beep-02.wav',*/
                             led: "FFF333",
                             foreground: true
                         });
@@ -169,30 +157,25 @@ function onDeviceReady() {
                     
                     else{
                         cordova.plugins.notification.local.schedule({
-                            title: 'Chalega ',
+                            title: 'Relax',
                             text: 'Next notification in '+Number(String(time/2)) +' mins',
                             foreground: true
                         });
-                        //alert("vapis chal");
                         setTimeout(myfunction,(time/2)*60*1000);
                     }
-                    // flaginternal = 1;
                 });
 
             }).fail(function() {
                 cordova.plugins.notification.local.schedule({
-                            title: 'Maa chud gyi',
-                            text: 'Net nhi chal rha aapka',
+                            title: 'Slow Internet Connection',
+                            text: 'Please Check your Network and start again',
                             foreground: true
                 });
-                // alert("Net nhi chal rha aapka");
             });
 
         }
 
-          //alert("khatam ho gya bc");
-        }
-        //window.open("second.html");
+          }
         setTimeout(myfunction,0);
     });
 }
